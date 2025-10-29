@@ -1,0 +1,218 @@
+/* 🌐 Page container */
+div {
+  background-color: #f8fafc;
+  min-height: 100vh;
+  padding: 40px;
+  font-family: "Poppins", sans-serif;
+  color: #1e293b;
+}
+
+/* 🧭 Heading */
+h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #0f172a;
+  letter-spacing: 1px;
+}
+
+/* 📊 Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Header row */
+th {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  padding: 14px 12px;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+/* Table data cells */
+td {
+  text-align: center;
+  padding: 14px 10px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.95rem;
+}
+
+/* Alternating rows */
+tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+/* Hover effect */
+tr:hover {
+  background-color: #eff6ff;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Coin image */
+td img {
+  vertical-align: middle;
+  border-radius: 50%;
+  margin-right: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ 24-hour change styling */
+td:nth-child(6) {
+  font-weight: 600;
+}
+
+/* Green for positive numbers */
+td:nth-child(6):not(:empty):has(+ td):not(:has(span.negative)) {
+  color: #16a34a; /* green */
+}
+
+td:nth-child(6)::before {
+  content: attr(data-arrow);
+}
+
+/* If negative number (contains minus sign), make it red and show ↓ */
+td:nth-child(6):has(span.negative),
+td:nth-child(6):has(:contains("-")),
+td:nth-child(6):has(-) {
+  color: #dc2626; /* red */
+}
+
+td:nth-child(6):has(:contains("-"))::before {
+  content: "↓ ";
+  color: #dc2626;
+}
+
+/* If positive number, show ↑ */
+td:nth-child(6):not(:has(:contains("-")))::before {
+  content: "↑ ";
+  color: #16a34a;
+}
+
+/* Last updated column */
+td:last-child {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+  table {
+    font-size: 0.85rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  td img {
+    width: 20px;
+  }
+}
+
+/* 🔍 Search Bar Styling */
+.search-bar {
+  display: block;
+  margin: 0 auto 30px auto;
+  width: 320px;
+  padding: 12px 18px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-family: "Poppins", sans-serif;
+  outline: none;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+  transition: all 0.3s ease;
+  color: #1e293b;
+}
+
+/* When user hovers or focuses */
+.search-bar:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.4);
+}
+
+/* Subtle placeholder styling */
+.search-bar::placeholder {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+}
+
+/* Add a hover effect */
+.search-bar:hover {
+  box-shadow: 0 0 6px rgba(37, 99, 235, 0.25);
+  transform: translateY(-1px);
+}
+
+
+/* 🔹 Center the dropdown */
+.filter-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 25px 0;
+}
+
+/* 🔹 Main dropdown style */
+.filter-dropdown {
+  padding: 14px 20px;
+  border-radius: 10px;
+  border: 2px solid #007bff;
+  background-color: #f8faff;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effect */
+.filter-dropdown:hover {
+  background-color: #e6f0ff;
+  transform: scale(1.05);
+}
+
+/* Focused look */
+.filter-dropdown:focus {
+  border-color: #0056d6;
+  box-shadow: 0 0 10px rgba(0, 91, 255, 0.4);
+}
+
+/* Option style */
+.filter-dropdown option {
+  background-color: #fff;
+  color: #333;
+  font-size: 16px;
+}
+
+/* Dark mode (optional) */
+@media (prefers-color-scheme: dark) {
+  .filter-dropdown {
+    background-color: #1e1e1e;
+    color: #eee;
+    border: 2px solid #00bfff;
+  }
+
+  .filter-dropdown:hover {
+    background-color: #252525;
+    border-color: #00bfff;
+  }
+
+  .filter-dropdown:focus {
+    border-color: #00bfff;
+    box-shadow: 0 0 10px rgba(0, 191, 255, 0.4);
+  }
+}
