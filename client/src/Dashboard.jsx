@@ -9,7 +9,7 @@ const Dashboard = () => {
     const [filter,setFilter] = useState("track")
 
     const handle = async() =>{
-        const data = await fetch("http://localhost:5000/api/coins")
+        const data = await fetch("https://crypto-tracker-ngqq.onrender.com/api/coins")
         const response = await data.json()
         setTrack(response)
     }
