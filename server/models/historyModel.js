@@ -1,37 +1,15 @@
 import mongoose from "mongoose";
 
 const historySchema = new mongoose.Schema({
- 
-  name: {
-    type: String,
-    required: true,
-  },
-  symbol: {
-    type: String,
-    required: true,
-  },
-  image: {
-    type: String,
-    required: true,
-  },
-  current_price: {
-    type: Number,
-    required: true,
-  },
-  market_cap: {
-    type: Number,
-    required: true,
-  },
-  price_change_percentage_24h: {
-    type: Number,
-    required: true,
-  },
-  last_updated: {
-    type: Date,
-    required: true,
-  },
+  name: { type: String },
+  symbol: { type: String },
+  image: { type: String },
+  current_price: { type: Number },
+  market_cap: { type: Number },
+  price_change_percentage_24h: { type: Number },
+  timestamp: { type: Date, default: Date.now },
 });
-
 
 const History = mongoose.model("History", historySchema);
 export default History;
+
