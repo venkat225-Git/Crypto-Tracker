@@ -5,28 +5,31 @@ const fetchdata = async (req, res) => {
   console.log("✅ Request reached /api/coins controller");
 
   try {
-    // External API URL (Top 10 crypto coins)
-    const response = await fetch(
-      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1",
-      {
-        method: "GET",
-        headers: {
-          "Accept": "application/json",
-          "User-Agent": "crypto-tracker-app (Render Deployment)" // Required header
-        },
-      }
-    );
+    const url =
+      "https://api.coingecko.com/api/v3/coins/markets" +
+      "?vs_currency=usd&order=market_cap_desc&per_page=10&page=1";
 
-    // If CoinGecko is down or rate limited
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "User-Agent": "crypto-tracker-app (Render Deployment)",
+      },
+      // Prevent hanging request
+      signal: AbortSignal.timeout(10000), // timeout in 10s
+    });
+
+    // Log status to understand what happens
+    console.log("🔎 CoinGecko response status:", response.status);
+
     if (!response.ok) {
-      console.error("❌ CoinGecko API failed with status:", response.status);
-      return res.status(500).json({ error: "External API error from CoinGecko" });
+      return res.status(response.status).json({
+        error: `External API error from CoinGecko (Status: ${response.status})`,
+      });
     }
 
-    // Parse data
     const outcome = await response.json();
 
-    // Filter only required fields
     const filteredData = outcome.map((coin) => ({
       id: coin.id,
       name: coin.name,
@@ -42,8 +45,12 @@ const fetchdata = async (req, res) => {
     res.status(200).json(filteredData);
   } catch (error) {
     console.error("❌ Backend fetch failed:", error.message);
-    res.status(500).json({ error: "Failed to fetch data" });
+    res.status(500).json({
+      error: "Failed to fetch data from CoinGecko",
+      details: error.message,
+    });
   }
 };
 
 export default fetchdata;
+
