@@ -1,5 +1,5 @@
 import express from "express"
-import { getCoins } from "../controllers/currentController.js"
+import getCoins from "../controllers/currentController"
 
 const router = express.Router()
 
