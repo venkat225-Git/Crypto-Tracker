@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import Coin from "../models/currentModel";
+import Coin from "../models/currentModel.js";
 
 const fetchdata = async (req, res) => {
   console.log("✅ Request reached /api/coins controller");
