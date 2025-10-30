@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const coinSchema = new mongoose.Schema({
-  id: {
+  coinId: {
     type: String,
     required: true,
   },
@@ -35,6 +35,5 @@ const coinSchema = new mongoose.Schema({
   },
 });
 
-
 const Coin = mongoose.model("Coin", coinSchema);
-export default Coin;
+export default Coin
