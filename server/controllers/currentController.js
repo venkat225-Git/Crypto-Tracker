@@ -1,82 +1,59 @@
-import fetch from "node-fetch";
 import Coin from "../models/currentModel.js";
+import fetch from "node-fetch";
 
 let cache = null;
 let lastFetch = 0;
 
-const fetchdata = async (req, res) => {
-  console.log("✅ Request reached /api/coins controller");
-
+const getCoins = async (req, res) => {
   try {
     const now = Date.now();
 
-    
+    // 🧠 Use cached data if fetched recently (less than 1 min ago)
     if (cache && now - lastFetch < 60 * 1000) {
-      console.log("⚡ Using cached CoinGecko data");
-      return res.status(200).json(cache);
+      console.log("✅ Using cached data");
+      return res.json(cache);
     }
 
-    const url =
-      "https://api.coingecko.com/api/v3/coins/markets" +
-      "?vs_currency=usd&order=market_cap_desc&per_page=10&page=1";
-
-    let response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Accept": "application/json",
-        "User-Agent": "crypto-tracker-app (Render Deployment)"
-      },
-      signal: AbortSignal.timeout(10000), 
-    });
-
-    console.log("🔎 CoinGecko response status:", response.status);
-
-    
-    if (response.status === 429) {
-      console.log("⚠️ CoinGecko rate-limit hit — using proxy...");
+    // 🌐 Try fetching from CoinGecko API
+    let response;
+    try {
       response = await fetch(
-        "https://api.allorigins.win/raw?url=" +
-        encodeURIComponent(url),
-        { headers: { "Accept": "application/json" } }
+        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd",
+        {
+          headers: {
+            "Accept": "application/json",
+            "User-Agent": "crypto-tracker-app",
+          },
+          timeout: 10000, // 10 sec timeout
+        }
       );
-      console.log("🌀 Proxy response status:", response.status);
+    } catch (err) {
+      console.error("❌ Fetch error:", err.message);
+      response = null;
     }
 
-    if (!response.ok) {
-      return res.status(response.status).json({
-        error: `External API error from CoinGecko (Status: ${response.status})`,
-      });
+    // ⚠️ If CoinGecko fails (500, 429, or network), use public proxy
+    if (!response || !response.ok) {
+      console.log(
+        `⚠️ CoinGecko API failed (status: ${response?.status || "no response"}) → Using proxy`
+      );
+      response = await fetch(
+        "https://api.allorigins.win/raw?url=https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd"
+      );
     }
 
-    const outcome = await response.json();
-
- 
-    const filteredData = outcome.map((coin) => ({
-      id: coin.id,
-      name: coin.name,
-      symbol: coin.symbol,
-      image: coin.image,
-      current_price: coin.current_price,
-      market_cap: coin.market_cap,
-      price_change_percentage_24h: coin.price_change_percentage_24h,
-      last_updated: coin.last_updated,
-    }));
-
-    
-    cache = filteredData;
+    const data = await response.json();
+    cache = data;
     lastFetch = now;
 
-    console.log("✅ Successfully fetched", filteredData.length, "coins");
-    res.status(200).json(filteredData);
+    console.log("✅ Data fetched successfully from:", response.url.includes("allorigins") ? "Proxy" : "CoinGecko");
+    res.json(data);
 
   } catch (error) {
-    console.error("❌ Backend fetch failed:", error.message);
-    res.status(500).json({
-      error: "Failed to fetch data from CoinGecko",
-      details: error.message,
-    });
+    console.error("💥 Controller Error:", error.message);
+    res.status(500).json({ error: "Failed to fetch crypto data" });
   }
 };
 
-export default fetchdata;
+export default getCoins
 

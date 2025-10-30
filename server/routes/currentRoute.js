@@ -1,8 +1,8 @@
 import express from "express"
-import fetchdata from "../controllers/currentController.js"
+import { getCoins } from "../controllers/currentController.js"
 
 const router = express.Router()
 
-router.get("/coins",fetchdata)
+router.get("/coins",getCoins)
 
 export default router 
