@@ -3,16 +3,15 @@ import Coin from "../models/currentModel.js";
 
 export const fetchdata = async (req, res) => {
   try {
-    console.log("🌍 Fetching live data from CoinGecko (via proxy)...");
+    console.log("🌍 Fetching live data from CoinGecko (via AllOrigins proxy)...");
 
-    // ✅ Use proxy to bypass Render rate limit
-    const proxyUrl = "https://proxy.cors.sh/";
+    // ✅ Use Render-safe proxy (AllOrigins)
     const targetUrl =
       "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1";
+    const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(targetUrl);
 
-    const response = await fetch(proxyUrl + targetUrl, {
+    const response = await fetch(proxyUrl, {
       headers: {
-        "x-cors-api-key": "temp_8f7b9a7df6d7d7e7", // free proxy key
         "User-Agent": "Mozilla/5.0",
         Accept: "application/json",
       },
@@ -39,7 +38,7 @@ export const fetchdata = async (req, res) => {
       last_updated: coin.last_updated,
     }));
 
-    // 💾 Optional: Save latest snapshot to DB
+    // 💾 Save latest snapshot to DB
     await Coin.deleteMany({});
     await Coin.insertMany(filteredData);
     console.log("✅ Coins updated in MongoDB Atlas");
