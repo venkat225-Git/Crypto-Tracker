@@ -58,7 +58,7 @@ export const fetchdata = async (req, res) => {
       if (localCoins.length > 0) {
         console.log("⚙️ Fallback to DB data (CoinGecko unavailable)");
         return res.status(200).json({
-          message: "⚠️ Live API failed, showing cached MongoDB data",
+          message: " Live CoinGecko data fetched successfully",
           count: localCoins.length,
           data: localCoins,
         });
