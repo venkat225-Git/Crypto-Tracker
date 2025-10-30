@@ -1,59 +1,24 @@
 import Coin from "../models/currentModel.js";
 import fetch from "node-fetch";
 
-let cache = null;
-let lastFetch = 0;
-
-const getCoins = async (req, res) => {
-  try {
-    const now = Date.now();
-
-    // 🧠 Use cached data if fetched recently (less than 1 min ago)
-    if (cache && now - lastFetch < 60 * 1000) {
-      console.log("✅ Using cached data");
-      return res.json(cache);
-    }
-
-    // 🌐 Try fetching from CoinGecko API
-    let response;
+const fetchdata = async (req,res)=>{
     try {
-      response = await fetch(
-        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd",
-        {
-          headers: {
-            "Accept": "application/json",
-            "User-Agent": "crypto-tracker-app",
-          },
-          timeout: 10000, // 10 sec timeout
-        }
-      );
-    } catch (err) {
-      console.error("❌ Fetch error:", err.message);
-      response = null;
+        const data = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1") 
+        const outcome = await data.json()
+        const filteredData = outcome.map((coin) => ({
+            id: coin.id,
+            name: coin.name,
+            symbol: coin.symbol,
+            image: coin.image,
+            current_price: coin.current_price,
+            market_cap: coin.market_cap,
+            price_change_percentage_24h: coin.price_change_percentage_24h,
+            last_updated: coin.last_updated,
+        }));
+        res.status(200).json(filteredData)
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch data" });
     }
+}
 
-    // ⚠️ If CoinGecko fails (500, 429, or network), use public proxy
-    if (!response || !response.ok) {
-      console.log(
-        `⚠️ CoinGecko API failed (status: ${response?.status || "no response"}) → Using proxy`
-      );
-      response = await fetch(
-        "https://api.allorigins.win/raw?url=https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd"
-      );
-    }
-
-    const data = await response.json();
-    cache = data;
-    lastFetch = now;
-
-    console.log("✅ Data fetched successfully from:", response.url.includes("allorigins") ? "Proxy" : "CoinGecko");
-    res.json(data);
-
-  } catch (error) {
-    console.error("💥 Controller Error:", error.message);
-    res.status(500).json({ error: "Failed to fetch crypto data" });
-  }
-};
-
-export default getCoins
-
+export default fetchdata
