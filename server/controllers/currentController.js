@@ -4,10 +4,8 @@ import fetch from "node-fetch";
 const fetchdata = async (req, res) => {
   try {
     const proxyUrl =
-      "https://api.allorigins.win/raw?url=" +
-      encodeURIComponent(
         "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1"
-      );
+
 
     const data = await fetch(proxyUrl);
     const outcome = await data.json();
